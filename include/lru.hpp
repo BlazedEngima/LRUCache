@@ -400,19 +400,19 @@ class LRUCache {
   template <typename Key, typename... Args>  // Variadic argument overload
     requires std::is_constructible_v<V, Args&&...> &&
              std::is_constructible_v<K, Key>
-  NodeIterator insert(Key&& key, Args&&... args) {
+  std::pair<NodeIterator, bool> insert(Key&& key, Args&&... args) {
     return insert_impl(std::forward<Key>(key), V(std::forward<Args>(args)...));
   }
 
   template <typename Key>  // Lvalue overload
     requires std::is_constructible_v<K, Key>
-  NodeIterator insert(Key&& key, const V& val) {
+  std::pair<NodeIterator, bool> insert(Key&& key, const V& val) {
     return insert_impl(std::forward<Key>(key), val);
   }
 
   template <typename Key>  // Rvalue overload
     requires std::is_constructible_v<K, Key>
-  NodeIterator insert(Key&& key, V&& val) {
+  std::pair<NodeIterator, bool> insert(Key&& key, V&& val) {
     return insert_impl(std::forward<Key>(key), std::move(val));
   }
 
