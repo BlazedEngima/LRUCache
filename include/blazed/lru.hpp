@@ -6,6 +6,7 @@
 #include <functional>
 #include <list>
 #include <memory>
+#include <stdexcept>
 #include <type_traits>
 #include <unordered_map>
 #include <utility>
@@ -92,8 +93,8 @@ class LRUCache {
    */
   void evict() {
     while (m_list.size() > m_max_capacity) {
-      auto val = m_list.back();
-      m_map.erase(val.first);
+      auto it = std::prev(m_list.end());
+      m_map.erase(it->first);
       m_list.pop_back();
     }
   }
@@ -200,7 +201,11 @@ class LRUCache {
    */
   template <typename Key>
   V& get_impl(const Key& key) {
-    auto it = m_map.at(key);
+    auto it = m_map.find(key);
+    if (it == m_map.end()) {
+      throw std::out_of_range("Key not found");
+    }
+
     touch(it->second);
     return it->second->second;
   }
@@ -211,17 +216,17 @@ class LRUCache {
    *  Helper for find().
    *  This version does not update the recency list.
    *
-   *  @return Iterator to element if found, otherwise end().
+   *  @return ConstIterator to element if found, otherwise end().
    */
   template <typename Key>
-  NodeIterator find_impl(const Key& key) const {
+  ConstNodeIterator find_impl(const Key& key) const {
     auto it = m_map.find(key);
 
     if (it == m_map.end()) {
       return m_list.end();
     }
 
-    return it->second;
+    return static_cast<ConstNodeIterator>(it->second);
   }
 
   /**
@@ -241,7 +246,6 @@ class LRUCache {
     }
 
     touch(it->second);
-
     return it->second;
   }
 
@@ -342,10 +346,10 @@ class LRUCache {
    *
    *  This version does not update the recency list.
    *
-   *  @return Iterator to element if found, otherwise end().
+   *  @return ConstIterator to element if found, otherwise end().
    */
   [[nodiscard("Ignoring the found key, value pair")]]
-  NodeIterator find(const K& key) const {
+  ConstNodeIterator find(const K& key) const {
     return find_impl(key);
   }
 
@@ -353,7 +357,7 @@ class LRUCache {
     requires HeterogeneousLookup<Hash, KeyEqual, K, Key> &&
              (!std::same_as<std::remove_cvref_t<Key>, K>)
   [[nodiscard("Ignoring the found key, value pair")]]
-  NodeIterator find(const Key& key) const {
+  ConstNodeIterator find(const Key& key) const {
     return find_impl(key);
   }
 
