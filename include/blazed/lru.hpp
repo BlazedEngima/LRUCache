@@ -344,7 +344,10 @@ class LRUCache {
   /**
    *  @brief Finds an element without throwing on failure.
    *
-   *  This version does not update the recency list.
+   *  This overload does not update the recency order.
+   *  The returned const iterator prevents modification of the underlying
+   *  element to preserve cache consistency. For mutable access with recency
+   *  update, use find_with_recency_update().
    *
    *  @return ConstIterator to element if found, otherwise end().
    */
