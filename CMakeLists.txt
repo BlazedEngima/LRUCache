@@ -1,10 +1,19 @@
 cmake_minimum_required(VERSION 4.0)
 
-project(DataStructs)
+project(LRUCache VERSION 1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+add_library(${PROJECT_NAME} INTERFACE)
+add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
+
+target_compile_features(${PROJECT_NAME} INTERFACE cxx_std_23)
+
+target_include_directories(${PROJECT_NAME} INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
 
 set(WARNING_FLAGS
   -pedantic
@@ -34,8 +43,10 @@ set(WARNING_FLAGS
   -Wno-unused
 )
 
-set(TEST_NAME lru_tests)
-add_executable(${TEST_NAME} src/lru_tests.cpp)
+if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
+  add_executable(LRUTests src/lru_tests.cpp)
+  target_link_libraries(LRUTests LRUCache)
 
-target_include_directories(${TEST_NAME} PUBLIC include/)
-target_compile_options(${TEST_NAME} PUBLIC "${WARNING_FLAGS} -fno-exceptions")
+  add_executable(LRUExample src/lru_example.cpp)
+  target_link_libraries(LRUExample LRUCache)
+endif()
