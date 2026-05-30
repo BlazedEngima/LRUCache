@@ -93,7 +93,7 @@ class LRUCache {
   void evict() {
     while (m_list.size() > m_max_capacity) {
       auto val = m_list.back();
-      m_map.erase(val->first);
+      m_map.erase(val.first);
       m_list.pop_back();
     }
   }
@@ -140,7 +140,7 @@ class LRUCache {
    */
   template <typename Key, typename Val>
   std::pair<NodeIterator, bool> insert_impl(Key&& key, Val&& value) {
-    if (auto it = m_map.find(key); it == m_map.end()) {
+    if (auto it = m_map.find(key); it != m_map.end()) {
       return std::make_pair(m_list.end(), false);
     }
 
