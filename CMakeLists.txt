@@ -53,6 +53,9 @@ if (CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_SOURCE_DIR)
   include(GoogleTest)
   gtest_discover_tests(LRUTests)
 
+  add_executable(LRUBenchmark src/lru_bench.cpp)
+  target_link_libraries(LRUBenchmark LRUCache benchmark::benchmark)
+
   add_executable(LRUExample src/lru_example.cpp)
   target_link_libraries(LRUExample LRUCache)
 endif()
