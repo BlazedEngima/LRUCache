@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
     std::println("Key: {}, Val: {}", ele.first, ele.second);
   }
 
-  // or alternatively, use the provided priont formats
+  // or alternatively, use the provided print formats
   std::println("{}", lru);
 
   lru.insert(5, 5);
